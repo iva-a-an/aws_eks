@@ -15,7 +15,7 @@ variable "ip_whitelist" {
 }
 
 variable "admin_ssh_public_key" {
-  type = string  
+  type = string
 }
 
 

@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "tf-eks-infinite-hen" ## TODO : See "init" project reference. terraform state list and then show
-    key            = "terraform/dev.project_demo.tfstate"
-    region         = "us-east-1"
+    bucket = "tf-eks-infinite-hen" ## TODO : See "init" project reference. terraform state list and then show
+    key    = "terraform/dev.project_demo.tfstate"
+    region = "us-east-1"
   }
 
 }
