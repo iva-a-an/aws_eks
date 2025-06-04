@@ -21,15 +21,15 @@ variable "public_subnets_cidr" {
 
 variable "private_subnets_a_cidr" {
   description = "CIDR block for the private subnets"
-  type        = string  
+  type        = string
 }
 
 variable "private_subnets_b_cidr" {
   description = "CIDR block for the private subnets"
-  type        = string  
+  type        = string
 }
 
 variable "ip_whitelist" {
-   description = "values to be used for whitelisting IPs"
-   type = list(string)
+  description = "values to be used for whitelisting IPs"
+  type        = list(string)
 }

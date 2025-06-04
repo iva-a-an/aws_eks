@@ -2,18 +2,19 @@
 ## TODO: Add better verification for new plan
 plan:
 	@echo "Terraform Plan"
+	@rm -f plan.tfplan
 	@terraform plan -out=plan.tfplan
 	@terraform show ./plan.tfplan | grep " # "
 
 
-#Get EKS kubeconfig
-kubeconfig:
-	@echo "Getting EKS kubeconfig"
-	EKS_CLUSTER_NAME=$$(terraform output -json | jq -r '.eks_cluster_name.value')
-	AWS_REGION=$$(terraform output -json | jq -r '.eks_cluster_region.value')
-	@echo "EKS_CLUSTER_NAME: $$EKS_CLUSTER_NAME"
-	@echo "AWS_REGION: $(AWS_REGION)"
-	@aws eks update-kubeconfig --name $$EKS_CLUSTER_NAME --region $$AWS_REGION
+# #Get EKS kubeconfig
+# kubeconfig:
+# 	@echo "Getting EKS kubeconfig"
+# 	EKS_CLUSTER_NAME=$$(terraform output -json | jq -r '.eks_cluster_name.value')
+# 	AWS_REGION=$$(terraform output -json | jq -r '.eks_cluster_region.value')
+# 	@echo "EKS_CLUSTER_NAME: $$EKS_CLUSTER_NAME"
+# 	@echo "AWS_REGION: $(AWS_REGION)"
+# 	@aws eks update-kubeconfig --name $$EKS_CLUSTER_NAME --region $$AWS_REGION
 
 #Install karpenter
 karpenter:

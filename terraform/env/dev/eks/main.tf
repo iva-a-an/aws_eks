@@ -11,11 +11,11 @@ module "network" {
 
 
 module "eks" {
-  source = "../../../modules/eks"
+  source              = "../../../modules/eks"
   private_subnet_a_id = module.network.private_subnet_a_id
   private_subnet_b_id = module.network.private_subnet_b_id
-  env = var.env
-  tags = var.tags
+  env                 = var.env
+  tags                = var.tags
 }
 
 

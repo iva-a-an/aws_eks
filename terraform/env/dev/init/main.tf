@@ -3,8 +3,8 @@
 resource "random_pet" "suffix" {}
 
 resource "aws_s3_bucket" "tf_demo" {
-  bucket = "tf-eks-${random_pet.suffix.id}"
-  tags = var.tags
+  bucket = "${var.env}-tf-eks-${random_pet.suffix.id}"
+  tags   = var.tags
 }
 
 
