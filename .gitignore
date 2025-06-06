@@ -1,6 +1,11 @@
 # Local .terraform directories
 **/.terraform/*
 
+# Ignore the .terraform directory itself, which contains the Terraform working directory
+.terraform.lock.hcl
+
+
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
