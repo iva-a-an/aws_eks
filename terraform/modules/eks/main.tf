@@ -1,3 +1,7 @@
+# EKS cluster moduele
+
+
+
 resource "aws_iam_role" "eks_cluster" {
   name        = "${var.env}-eks_cluster"
   description = "EKS Cluster Role for ${var.env} environment"
@@ -176,7 +180,18 @@ resource "aws_eks_node_group" "spot" {
 }
 
 
-# OIDC Provider for EKS
+# Build the OIDC trust relationship for the EKS cluster
+# This is required for the EBS CSI driver to work with EKS.
+# The OIDC provider is used to authenticate Kubernetes service accounts with AWS IAM roles.
+# This is necessary for the EBS CSI driver to function properly.
+# The OIDC provider is automatically created by EKS when the cluster is created.
+# The OIDC provider URL is in the format: https://oidc.eks.<region>.amazonaws.com/id/<eks-cluster-id>
+# The thumbprint is the SHA1 fingerprint of the certificate used by the OIDC provider.
+# The thumbprint is used to verify the authenticity of the OIDC provider.
+# The OIDC provider is used to authenticate Kubernetes service accounts with AWS IAM roles.
+# The OIDC provider is automatically created by EKS when the cluster is created.
+# The OIDC provider URL is in the format: https://oidc.eks.<region>.amazonaws.com/id/<eks-cluster-id>
+# The thumbprint is the SHA1 fingerprint of the certificate used by the OIDC provider.
 data "tls_certificate" "eks" {
   url = aws_eks_cluster.eks.identity[0].oidc[0].issuer
 }
@@ -221,4 +236,39 @@ resource "aws_eks_addon" "csi_driver" {
   cluster_name             = aws_eks_cluster.eks.name
   addon_name               = "aws-ebs-csi-driver"
   service_account_role_arn = aws_iam_role.eks_ebs_csi_driver.arn
+}
+
+
+# Ingress Controller IAM Role
+data "aws_iam_policy_document" "aws_load_balancer_controller_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
+    }
+
+    principals {
+      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+      type        = "Federated"
+    }
+  }
+}
+
+resource "aws_iam_role" "aws_load_balancer_controller" {
+  assume_role_policy = data.aws_iam_policy_document.aws_load_balancer_controller_assume_role_policy.json
+  name               = "aws-load-balancer-controller"
+}
+
+resource "aws_iam_policy" "aws_load_balancer_controller" {
+  policy = file("${path.module}/policies/aws_elb_ingress_policy.json")
+  name   = "AWSLoadBalancerController"
+}
+
+resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller_attach" {
+  role       = aws_iam_role.aws_load_balancer_controller.name
+  policy_arn = aws_iam_policy.aws_load_balancer_controller.arn
 }

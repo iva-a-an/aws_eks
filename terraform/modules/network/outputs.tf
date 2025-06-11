@@ -12,3 +12,8 @@ output "vpc_id" {
   value       = aws_vpc.vpc_demo.id
   description = "The ID of the VPC"
 }
+
+output "default_security_group_id" {
+  value       = aws_vpc.vpc_demo.default_security_group_id
+  description = "The ID of the default security group for the VPC"
+}

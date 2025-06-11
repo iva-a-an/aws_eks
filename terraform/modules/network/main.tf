@@ -50,7 +50,10 @@ resource "aws_subnet" "private_subnet_a" {
   cidr_block              = var.private_subnets_a_cidr
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1a" # Specify the availability zone if needed
-  tags                    = merge(var.tags, { "Name" : "${var.env}-private_subnet_a" })
+  tags = merge(var.tags, {
+    "Name" = "${var.env}-private_subnet_a",
+    "kubernetes.io/role/elb" : "1"
+  })
   # add dns resolution and hostnames
 
 }
@@ -61,7 +64,11 @@ resource "aws_subnet" "private_subnet_b" {
   cidr_block              = var.private_subnets_b_cidr
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1b" # Specify the availability zone if needed
-  tags                    = merge(var.tags, { "Name" : "${var.env}-private_subnet_b" })
+  tags = merge(var.tags, {
+    "Name"                   = "${var.env}-private_subnet_b"
+    "kubernetes.io/role/elb" = "1"
+  })
+
 }
 
 
